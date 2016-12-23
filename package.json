@@ -1,0 +1,19 @@
+{
+  "name": "web-packer-router",
+  "version": "1.0.0",
+  "description": "To create a project that can autodetect dependency of webpack load</br>\r an example is react-native can auto detect ios/android.js according the plateform running",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhouyuanhao/WebPackerRouter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhouyuanhao/WebPackerRouter/issues"
+  },
+  "homepage": "https://github.com/zhouyuanhao/WebPackerRouter#readme"
+}
