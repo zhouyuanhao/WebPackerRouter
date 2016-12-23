@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/zhouyuanhao/WebPackerRouter/issues"
   },
-  "homepage": "https://github.com/zhouyuanhao/WebPackerRouter#readme"
+  "homepage": "https://github.com/zhouyuanhao/WebPackerRouter#readme",
+  "devDependencies": {
+    "webpack": "^1.14.0"
+  }
 }
