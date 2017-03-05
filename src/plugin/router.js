@@ -19,6 +19,15 @@ HelloWorldPlugin.prototype.apply = function(compiler) {
 	});
 
 	compiler.plugin('compilation', function(compilation, params) {
+		compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
+			console.log('opt');
+			callback();
+		});
+		compilation.plugin('normal-module-loader', function(loaderContext, module) {
+			console.log('load-test here')
+				//this is where all the modules are loaded
+				//one by one, no dependencies are created yet
+		});
 		compilation.plugin('after-optimize-chunk-assets', function(chunks) {
 			console.log(chunks.map(function(c) {
 				return {
@@ -30,6 +39,14 @@ HelloWorldPlugin.prototype.apply = function(compiler) {
 				};
 			}));
 		});
+	});
+	compiler.plugin('emit', function(compilation, callback) {
+		console.log('emit')
+		callback();
+	});
+	compiler.plugin("make", function(compilation, callback) {
+		console.log('make')
+		callback();
 	});
 };
 

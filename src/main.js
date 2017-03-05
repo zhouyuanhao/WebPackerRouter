@@ -1,5 +1,1 @@
-var a=function(){
-	alert(1)
-};
-
-a();
+require('./a.js')
