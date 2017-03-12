@@ -15,7 +15,7 @@ function HelloWorldPlugin(options) {
 
 HelloWorldPlugin.prototype.apply = function(compiler) {
 	compiler.plugin('done', function() {
-		console.log('Hello World!');
+		console.log('webpack done!');
 	});
 
 	compiler.plugin('compilation', function(compilation, params) {
@@ -24,7 +24,9 @@ HelloWorldPlugin.prototype.apply = function(compiler) {
 			callback();
 		});
 		compilation.plugin('normal-module-loader', function(loaderContext, module) {
-			console.log('load-test here')
+			console.log('load-test here');
+			console.log(loaderContext.resolve.toString());
+			loaderContext.resourcePath = 'D:\\node-workspace\\web-packer-router\\src\\b.js'
 				//this is where all the modules are loaded
 				//one by one, no dependencies are created yet
 		});
