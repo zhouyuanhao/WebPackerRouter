@@ -1,5 +1,7 @@
+ParseUtil = require('./parseUtil')
 yaml = require('js-yaml');
 fs = require('fs');
+
 
 try {
 	var doc = yaml.safeLoad(fs.readFileSync('./web-packer-router.conf.yml', 'utf8'));
@@ -14,6 +16,7 @@ function HelloWorldPlugin(options) {
 }
 
 HelloWorldPlugin.prototype.apply = function(compiler) {
+	var env = "a";
 	compiler.plugin('done', function() {
 		console.log('webpack done!');
 	});
@@ -22,13 +25,6 @@ HelloWorldPlugin.prototype.apply = function(compiler) {
 		compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
 			console.log('opt');
 			callback();
-		});
-		compilation.plugin('normal-module-loader', function(loaderContext, module) {
-			console.log('load-test here');
-			console.log(loaderContext.resolve.toString());
-			loaderContext.resourcePath = 'D:\\node-workspace\\web-packer-router\\src\\b.js'
-				//this is where all the modules are loaded
-				//one by one, no dependencies are created yet
 		});
 		compilation.plugin('after-optimize-chunk-assets', function(chunks) {
 			console.log(chunks.map(function(c) {
@@ -48,6 +44,12 @@ HelloWorldPlugin.prototype.apply = function(compiler) {
 	});
 	compiler.plugin("make", function(compilation, callback) {
 		console.log('make')
+		compilation.plugin('normal-module-loader', function(loaderContext, module) {
+			console.log('load-test here');
+			console.log(loaderContext.resourcePath);
+			var path = loaderContext.resourcePath;
+			loaderContext.resourcePath = ParseUtil.resolveFileAccordingEnv(loaderContext.resourcePath, 'test');
+		});
 		callback();
 	});
 };
