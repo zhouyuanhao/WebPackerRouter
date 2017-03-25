@@ -13,7 +13,7 @@ var webpackConfig = {
 	},
 	plugins: [
 		new RouterPlugin({
-			options: true
+			env: 'test'
 		})
 	]
 };

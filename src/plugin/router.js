@@ -12,18 +12,28 @@ try {
 
 function RouterPlugin(options) {
 	console.log("router plugin enabled")
-	global.abc = "this is a global message"
-		// Setup the plugin instance with options...
+	global.routerPlugin = {}
+	if (!options.env) {
+		global.routerPlugin.enabled = false;
+	}
+	global.routerPlugin.enabled = true;
+	global.routerPlugin.targetEnv = options.env;
+	// Setup the plugin instance with options...
 }
 
 RouterPlugin.prototype.apply = function(compiler) {
 	var env = "a";
 	compiler.plugin("make", function(compilation, callback) {
 		compilation.plugin('normal-module-loader', function(loaderContext, module) {
+			if (!global.routerPlugin.enabled) {
+				return;
+			}
 			var path = loaderContext.resourcePath;
-			console.log('ori path-' + path);
-			loaderContext.resourcePath = ParseUtil.resolveFileAccordingEnv(loaderContext.resourcePath, 'test');
-			console.log('after path-' + loaderContext.resourcePath);
+			loaderContext.resourcePath = ParseUtil.resolveFileAccordingEnv(loaderContext.resourcePath, global.routerPlugin.targetEnv);
+			if (path != loaderContext.resourcePath) {
+				console.log('ori path-' + path);
+				console.log('after path-' + loaderContext.resourcePath);
+			}
 		});
 		callback();
 	});
