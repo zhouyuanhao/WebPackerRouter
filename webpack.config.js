@@ -1,4 +1,4 @@
-var HelloWorldPlugin = require('./src/plugin/router.js');
+var RouterPlugin = require('./src/plugin/router.js');
 
 var webpackConfig = {
 	entry: {
@@ -12,7 +12,7 @@ var webpackConfig = {
 		extensions: ['', '.js', '.jsx']
 	},
 	plugins: [
-		new HelloWorldPlugin({
+		new RouterPlugin({
 			options: true
 		})
 	]
