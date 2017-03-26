@@ -18,7 +18,10 @@ function RouterPlugin(options) {
 	}
 	global.routerPlugin.enabled = true;
 	global.routerPlugin.targetEnv = options.env;
-	// Setup the plugin instance with options...
+	global.routerPlugin.targetEnvChain = ['test', 'test2', 'test3'];
+	console.log('extend path:')
+	console.log(global.routerPlugin.targetEnvChain.join('->'))
+		// Setup the plugin instance with options...
 }
 
 RouterPlugin.prototype.apply = function(compiler) {
@@ -29,7 +32,7 @@ RouterPlugin.prototype.apply = function(compiler) {
 				return;
 			}
 			var path = loaderContext.resourcePath;
-			loaderContext.resourcePath = ParseUtil.resolveFileAccordingEnv(loaderContext.resourcePath, global.routerPlugin.targetEnv);
+			loaderContext.resourcePath = ParseUtil.resolveFile2MatchEnv(loaderContext.resourcePath);
 			if (path != loaderContext.resourcePath) {
 				console.log('ori path-' + path);
 				console.log('after path-' + loaderContext.resourcePath);

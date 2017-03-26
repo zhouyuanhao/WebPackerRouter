@@ -1,22 +1,28 @@
 var fs = require("fs")
 const ParseUtil = {
-	resolveFileAccordingEnv: function(path, env) {
-		var fileArr = path.split(/\/|\\/);
-		var file = fileArr[fileArr.length - 1]
-		var fileNameStruct = file.split('.');
-		if (fileNameStruct.length != 0) {
-			fileNameStruct[fileNameStruct.length] = fileNameStruct[fileNameStruct.length - 1];
-			fileNameStruct[fileNameStruct.length - 2] = env;
-			var newFileName = fileNameStruct.join('.');
-			fileArr[fileArr.length - 1] = newFileName;
-			var newPath = fileArr.join('/');
+	resolveFile2MatchEnv: function(path) {
+		var envChain = global.routerPlugin.targetEnvChain;
+		var filePathArr = path.split(/\/|\\/);
+		var fileName = filePathArr[filePathArr.length - 1];
+		var fileNameArray = fileName.split('.');
+		var tempFileNameArray;
+		if (fileNameArray.length == 0) {
+			return path;
+		}
+		var env;
+		for (var count in envChain) {
+			env = envChain[count];
+			tempFileNameArray = fileNameArray.concat(); //copy the array
+			tempFileNameArray[tempFileNameArray.length] = tempFileNameArray[tempFileNameArray.length - 1];
+			tempFileNameArray[tempFileNameArray.length - 2] = env;
+			var newFileName = tempFileNameArray.join('.');
+			filePathArr[filePathArr.length - 1] = newFileName;
+			var newPath = filePathArr.join('/');
 			if (fsExistsSync(newPath)) {
 				return newPath;
 			}
-			return path
 		}
-
-		return pathArr[pathArr.length];
+		return path;
 	}
 }
 
