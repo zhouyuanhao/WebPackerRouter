@@ -1,14 +1,5 @@
 ParseUtil = require('./parseUtil')
-yaml = require('js-yaml');
 fs = require('fs');
-
-
-try {
-	var doc = yaml.safeLoad(fs.readFileSync('./web-packer-router.conf.yml', 'utf8'));
-} catch (e) {
-	var doc = yaml.safeLoad(fs.readFileSync('./src/plugin/web-packer-router.conf.yml', 'utf8'));
-}
-
 
 function RouterPlugin(options) {
 	console.log("router plugin enabled")
@@ -19,9 +10,9 @@ function RouterPlugin(options) {
 	global.routerPlugin.enabled = true;
 	global.routerPlugin.targetEnv = options.env;
 	global.routerPlugin.targetEnvChain = ['test', 'test2', 'test3'];
-	console.log('extend path:')
-	console.log(global.routerPlugin.targetEnvChain.join('->'))
-		// Setup the plugin instance with options...
+	console.log('extend path:');
+	console.log(global.routerPlugin.targetEnvChain.join('->'));
+	// Setup the plugin instance with options...
 }
 
 RouterPlugin.prototype.apply = function(compiler) {
