@@ -1,4 +1,4 @@
-var RouterPlugin = require('./src/plugin/router.js');
+var routerPlugin = require('./src/plugin/router.js');
 
 var webpackConfig = {
 	entry: {
@@ -12,8 +12,9 @@ var webpackConfig = {
 		extensions: ['', '.js', '.jsx']
 	},
 	plugins: [
-		new RouterPlugin({
-			env: 'test'
+		new routerPlugin({
+			env: 'test',
+			confFile: 'envs.prop'
 		})
 	]
 };

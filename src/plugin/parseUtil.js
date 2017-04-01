@@ -1,5 +1,5 @@
 var fs = require("fs")
-const ParseUtil = {
+const parseUtil = {
 	resolveFile2MatchEnv: function(path) {
 		var envChain = global.routerPlugin.targetEnvChain;
 		var filePathArr = path.split(/\/|\\/);
@@ -26,4 +26,4 @@ const ParseUtil = {
 	}
 }
 
-module.exports = ParseUtil;
+module.exports = parseUtil;

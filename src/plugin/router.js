@@ -1,7 +1,7 @@
-ParseUtil = require('./parseUtil')
+parseUtil = require('./parseUtil')
 fs = require('fs');
 
-function RouterPlugin(options) {
+function routerPlugin(options) {
 	console.log("router plugin enabled")
 	global.routerPlugin = {}
 	if (!options.env) {
@@ -15,7 +15,7 @@ function RouterPlugin(options) {
 	// Setup the plugin instance with options...
 }
 
-RouterPlugin.prototype.apply = function(compiler) {
+routerPlugin.prototype.apply = function(compiler) {
 	var env = "a";
 	compiler.plugin("make", function(compilation, callback) {
 		compilation.plugin('normal-module-loader', function(loaderContext, module) {
@@ -23,7 +23,7 @@ RouterPlugin.prototype.apply = function(compiler) {
 				return;
 			}
 			var path = loaderContext.resourcePath;
-			loaderContext.resourcePath = ParseUtil.resolveFile2MatchEnv(loaderContext.resourcePath);
+			loaderContext.resourcePath = parseUtil.resolveFile2MatchEnv(loaderContext.resourcePath);
 			if (path != loaderContext.resourcePath) {
 				console.log('ori path-' + path);
 				console.log('after path-' + loaderContext.resourcePath);
@@ -33,4 +33,4 @@ RouterPlugin.prototype.apply = function(compiler) {
 	});
 };
 
-module.exports = RouterPlugin;
+module.exports = routerPlugin;
