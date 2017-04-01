@@ -18,7 +18,7 @@ const ParseUtil = {
 			var newFileName = tempFileNameArray.join('.');
 			filePathArr[filePathArr.length - 1] = newFileName;
 			var newPath = filePathArr.join('/');
-			if (fsExistsSync(newPath)) {
+			if (fs.existsSync(newPath)) {
 				return newPath;
 			}
 		}
@@ -26,12 +26,4 @@ const ParseUtil = {
 	}
 }
 
-function fsExistsSync(path) {
-	try {
-		fs.accessSync(path, fs.F_OK);
-	} catch (e) {
-		return false;
-	}
-	return true;
-}
 module.exports = ParseUtil;
