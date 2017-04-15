@@ -1,5 +1,6 @@
 parseUtil = require('./parseUtil')
 fs = require('fs');
+treePropFileParser = require('./treePropFileParser')
 
 function routerPlugin(options) {
 	console.log("router plugin enabled")
@@ -13,6 +14,7 @@ function routerPlugin(options) {
 	console.log('extend path:');
 	console.log(global.routerPlugin.targetEnvChain.join('->'));
 	// Setup the plugin instance with options...
+	treePropFileParser.init();
 }
 
 routerPlugin.prototype.apply = function(compiler) {
