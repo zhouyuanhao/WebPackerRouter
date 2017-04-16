@@ -5,14 +5,15 @@ treePropFileParser = require('./treePropFileParser')
 function routerPlugin(options) {
 	console.log("router plugin enabled")
 	global.routerPlugin = {}
-	if (!options.env) {
+	if (!options || !options.env || !options.confFile) {
+		console.log("plugin configuration not correct, expected config is :");
+		console.log("    env -- (mandaroty)the env want to pick");
+		console.log("    confFile -- (mandaroty)the configuration file");
 		global.routerPlugin.enabled = false;
+		return;
 	}
+	global.routerPlugin = options;
 	global.routerPlugin.enabled = true;
-	global.routerPlugin.targetEnv = options.env;
-	global.routerPlugin.targetEnvChain = ['test', 'test2', 'test3'];
-	console.log('extend path:');
-	console.log(global.routerPlugin.targetEnvChain.join('->'));
 	// Setup the plugin instance with options...
 	treePropFileParser.init();
 }
