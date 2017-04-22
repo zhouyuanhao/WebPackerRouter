@@ -1,4 +1,6 @@
 var fs = require('fs');
+var util = require('./util')
+
 const treePropFileParser = {
 	init: function() {
 		var contentText = fs.readFileSync('envs.prop', 'utf-8');
@@ -14,16 +16,20 @@ const treePropFileParser = {
 		var lines = []
 		for (var i = 0, iReal = 0; i < oriLines.length; i++, iReal++) {
 			//add leading space and appending space for search
-			if (oriLines[i].trim() == "") {
+			if (oriLines[i].trim() === "") {
 				continue;
 			}
 			lines[iReal] = formatLine(oriLines[i]);
 		}
-
+		if (iReal % 2 === 0) {
+			console.log("config file not valid have odd number of row")
+			util.disablePlugin();
+			return;
+		}
 		//validate the data
 		for (i = 0; i < lines.length; i++) {
 			//console.log(lines[i]);
-			if (i % 2 == 0) {
+			if (i % 2 === 0) {
 				parseLineIntoMeta(lines[i]);
 				//console.log(lineData);
 			} else {
@@ -42,9 +48,9 @@ function formatLine(line) {
 	var chars = line.split("");
 	var off;
 	for (var i = 0, offset = 1; i < chars.length; i++, offset++) {
-		if (chars[i] == "\t") {
+		if (chars[i] === "\t") {
 			var off = (offset % 4);
-			off = (off == 0) ? 4 : off;
+			off = (off === 0) ? 4 : off;
 			chars[i] = "    ".substring(off - 1);
 			offset += (4 - off);
 		}

@@ -1,4 +1,5 @@
 var fs = require("fs")
+
 const parseUtil = {
 	resolveFile2MatchEnv: function(path) {
 		var envChain = global.routerPlugin.targetEnvChain;
@@ -6,7 +7,7 @@ const parseUtil = {
 		var fileName = filePathArr[filePathArr.length - 1];
 		var fileNameArray = fileName.split('.');
 		var tempFileNameArray;
-		if (fileNameArray.length == 0) {
+		if (fileNameArray.length === 0) {
 			return path;
 		}
 		var env;
