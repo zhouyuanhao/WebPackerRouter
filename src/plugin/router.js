@@ -8,15 +8,20 @@ function routerPlugin(options) {
 	global.routerPlugin = {}
 	if (!options || !options.env || !options.confFile) {
 		console.log("plugin configuration not correct, expected config is :");
-		console.log("    env -- (mandaroty)the env want to pick");
-		console.log("    confFile -- (mandaroty)the configuration file");
+		console.log("    env -- (mandaroty) the env want to pick");
+		console.log("    confFile -- (mandaroty) the configuration file");
 		util.disablePlugin()
 		return;
 	}
 	global.routerPlugin = options;
 	util.disablePlugin(false);
 	// Setup the plugin instance with options...
-	treePropFileParser.init();
+	try {
+		treePropFileParser.init();
+	} catch (err) {
+		console.log("error " + err);
+		util.disablePlugin(false);
+	}
 }
 
 routerPlugin.prototype.apply = function(compiler) {

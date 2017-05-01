@@ -2,16 +2,13 @@ var fs = require('fs');
 var util = require('./util')
 
 const treePropFileParser = {
+
+
 	init: function() {
-		var contentText = fs.readFileSync('envs.prop', 'utf-8');
+		var contentText = fs.readFileSync(global.routerPlugin.confFile, 'utf-8');
 		//console.log(contentText);
 
 		//parse tree file here
-		var root = {
-			env: "",
-			parent: null
-		}
-
 		var oriLines = contentText.split('\r\n');
 		var lines = []
 		for (var i = 0, iReal = 0; i < oriLines.length; i++, iReal++) {
@@ -22,20 +19,14 @@ const treePropFileParser = {
 			lines[iReal] = formatLine(oriLines[i]);
 		}
 		if (iReal % 2 === 0) {
-			console.log("config file not valid have odd number of row")
+			console.log("config file not valid, have odd number of row")
 			util.disablePlugin();
 			return;
 		}
-		//validate the data
-		for (i = 0; i < lines.length; i++) {
-			//console.log(lines[i]);
-			if (i % 2 === 0) {
-				parseLineIntoMeta(lines[i]);
-				//console.log(lineData);
-			} else {
-
-			}
-
+		var lastMeta = paraseFirstLineIntoMeta(lines[0]);
+		console.log("----" + lastMeta);
+		for (i = 1; i < lines.length; i += 2) {
+			lastMeta = parseLineIntoMeta(lines, i, lastMeta);
 		}
 
 		global.routerPlugin.targetEnvChain = ['test', 'test2', 'test3'];
@@ -58,10 +49,60 @@ function formatLine(line) {
 	return " " + chars.join('') + " "
 }
 
-function parseLineIntoMeta(line) {
+root = {
+	env: "",
+	parent: null
+}
+
+existEnv = {}
+
+function paraseFirstLineIntoMeta(line) {
+	var metas = []
 	var lineData = line.split(/[ ]+/);
-	//console.log(lineData);
-	//TODO return Meta array
+	for (var i = 1; i < lineData.length - 1; i++) {
+		if (existEnv[lineData[i]] != null) {
+			throw lineData[i] + " already defined ! Each env should only be defined once."
+		}
+		var pos = line.indexOf(" " + lineData[i] + " ") + 1;
+		var meta = {
+			env: lineData[i],
+			start: pos,
+			end: pos + lineData[i].length,
+			parent: root
+		}
+		metas.push(meta);
+		existEnv[lineData[i]] = meta;
+	}
+	return metas;
+}
+
+function parseLineIntoMeta(lines, lineNum, lastMeta) {
+	var directLine = lines[lineNum];
+	var envLine = lines[lineNum + 1];
+	var metas = []
+
+	var envArr = envLine.split(/[ ]+/);
+	var directArr = directLine.split(/[ ]+/);
+	if (envArr.length != directArr.length) {
+		throw "line " + lineNum + " direction and env don't match"
+	}
+
+	//TODO: parse this line and match with lastMeta
+	for (var i = 1; i < lineData.length - 1; i++) {
+		if (existEnv[lineData[i]] != null) {
+			throw env + " already defined ! Each env should only be defined once."
+		}
+		var pos = line.indexOf(" " + lineData[i] + " ") + 1;
+		var meta = {
+			env: lineData[i],
+			start: pos,
+			end: pos + lineData[i].length,
+			parent: root
+		}
+		metas.push(meta);
+		existEnv[lineData[i]] = meta;
+	}
+	return metas;
 }
 
 module.exports = treePropFileParser;
