@@ -24,7 +24,6 @@ const treePropFileParser = {
 			return;
 		}
 		var lastMeta = paraseFirstLineIntoMeta(lines[0]);
-		console.log("----" + lastMeta);
 		for (i = 1; i < lines.length; i += 2) {
 			lastMeta = parseLineIntoMeta(lines, i, lastMeta);
 		}
@@ -49,11 +48,6 @@ function formatLine(line) {
 	return " " + chars.join('') + " "
 }
 
-root = {
-	env: "",
-	parent: null
-}
-
 existEnv = {}
 
 function paraseFirstLineIntoMeta(line) {
@@ -67,8 +61,8 @@ function paraseFirstLineIntoMeta(line) {
 		var meta = {
 			env: lineData[i],
 			start: pos,
-			end: pos + lineData[i].length,
-			parent: root
+			end: pos + lineData[i].length - 1,
+			parent: null
 		}
 		metas.push(meta);
 		existEnv[lineData[i]] = meta;
@@ -84,23 +78,35 @@ function parseLineIntoMeta(lines, lineNum, lastMeta) {
 	var envArr = envLine.split(/[ ]+/);
 	var directArr = directLine.split(/[ ]+/);
 	if (envArr.length != directArr.length) {
-		throw "line " + lineNum + " direction and env don't match"
+		throw "line " + lineNum + " direction and env don't match";
 	}
 
-	//TODO: parse this line and match with lastMeta
-	for (var i = 1; i < lineData.length - 1; i++) {
-		if (existEnv[lineData[i]] != null) {
-			throw env + " already defined ! Each env should only be defined once."
+	for (var i = 1; i < envArr.length - 1; i++) {
+		if (existEnv[envArr[i]] != null) {
+			throw envArr[i] + " already defined ! Each env should only be defined once.";
 		}
-		var pos = line.indexOf(" " + lineData[i] + " ") + 1;
+		var pos = envLine.indexOf(" " + envArr[i] + " ") + 1;
+		var direct = null;
+		for (var x = pos; x < pos + envArr[i].length; x++) {
+			if (directLine[x] !== ' ' && direct != null) {
+				throw 'multiple direction detected for ' + envArr[i];
+			}
+			if (directLine[x] === '/' || directLine[x] === '|' || directLine[x] === '\\') {
+				direct = directLine[x];
+			} else if (directLine[x] !== ' ') {
+				throw 'invalid direction detected for ' + envArr[i];
+			}
+		}
+
+		// TODO: according the direct to get the parent node
 		var meta = {
-			env: lineData[i],
+			env: envArr[i],
 			start: pos,
-			end: pos + lineData[i].length,
-			parent: root
+			end: pos + envArr[i].length - 1,
+			parent: null //TODO: get the parent node
 		}
 		metas.push(meta);
-		existEnv[lineData[i]] = meta;
+		existEnv[envArr[i]] = meta;
 	}
 	return metas;
 }
