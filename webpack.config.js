@@ -13,7 +13,7 @@ var webpackConfig = {
 	},
 	plugins: [
 		new routerPlugin({
-			env: 'test',
+			env: 'e2',
 			confFile: 'envs.prop'
 		})
 	]

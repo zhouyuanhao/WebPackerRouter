@@ -6,7 +6,6 @@ const treePropFileParser = {
 
 	init: function() {
 		var contentText = fs.readFileSync(global.routerPlugin.confFile, 'utf-8');
-		//console.log(contentText);
 
 		//parse tree file here
 		var oriLines = contentText.split('\r\n');
@@ -28,10 +27,23 @@ const treePropFileParser = {
 			lastMeta = parseLineIntoMeta(lines, i, lastMeta);
 		}
 
-		global.routerPlugin.targetEnvChain = ['test', 'test2', 'test3'];
+		global.routerPlugin.targetEnvChain = getHierarchy();
 		console.log('extend path:');
 		console.log(global.routerPlugin.targetEnvChain.join('->'));
 	}
+}
+
+function getHierarchy() {
+	var map = []
+	var node = existEnv[global.routerPlugin.env];
+	if (node == null) {
+		throw 'env "' + global.routerPlugin.env + '" not detected in the config file!'
+	}
+	while (node != null) {
+		map.push(node.env);
+		node = node.parent
+	}
+	return map;
 }
 
 function formatLine(line) {
@@ -87,23 +99,58 @@ function parseLineIntoMeta(lines, lineNum, lastMeta) {
 		}
 		var pos = envLine.indexOf(" " + envArr[i] + " ") + 1;
 		var direct = null;
+		var directPos = 0;
 		for (var x = pos; x < pos + envArr[i].length; x++) {
 			if (directLine[x] !== ' ' && direct != null) {
 				throw 'multiple direction detected for ' + envArr[i];
 			}
 			if (directLine[x] === '/' || directLine[x] === '|' || directLine[x] === '\\') {
 				direct = directLine[x];
+				directPos = x;
 			} else if (directLine[x] !== ' ') {
 				throw 'invalid direction detected for ' + envArr[i];
 			}
 		}
-
+		if (direct == null) {
+			throw 'no direction detected for ' + envArr[i];
+		}
+		var parent = null;
+		if (direct === '|') {
+			for (var tempMeta in lastMeta) {
+				if (lastMeta[tempMeta].start <= directPos && lastMeta[tempMeta].end >= directPos) {
+					parent = lastMeta[tempMeta];
+					break;
+				}
+			}
+			if (parent == null) {
+				throw 'no parent detected for ' + envArr[i];
+			}
+		} else if (direct === '/') {
+			for (var tempMeta in lastMeta) {
+				if (lastMeta[tempMeta].end > directPos) {
+					parent = lastMeta[tempMeta];
+					break;
+				}
+			}
+			if (parent == null) {
+				throw 'no parent detected for ' + envArr[i];
+			}
+		} else if (direct === '\\') {
+			for (var tempMeta in lastMeta) {
+				if (lastMeta[tempMeta].start < directPos) {
+					parent = lastMeta[tempMeta];
+				}
+			}
+			if (parent == null) {
+				throw 'no parent detected for ' + envArr[i];
+			}
+		}
 		// TODO: according the direct to get the parent node
 		var meta = {
 			env: envArr[i],
 			start: pos,
 			end: pos + envArr[i].length - 1,
-			parent: null //TODO: get the parent node
+			parent: parent
 		}
 		metas.push(meta);
 		existEnv[envArr[i]] = meta;
